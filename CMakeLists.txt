@@ -1,8 +1,19 @@
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 3.17)
 
 cmake_policy(SET CMP0054 NEW)
+cmake_policy(SET CMP0091 NEW)
 
 set(CMAKE_CXX_STANDARD 17)
+
+if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+	set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+		CACHE STRING "")
+endif()
+
+if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
+	set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}"
+		CACHE STRING "")
+endif()
 
 project(HPC.Lab4)
 
@@ -10,16 +21,5 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-
-include(FindCUDA)
-find_package(CUDA REQUIRED)
-
-include_directories(${CUDA_INCLUDE_DIRS})
-
-message(STATUS "CUDA version: ${CUDA_VERSION_STRING}")
-message(STATUS "CUDA include dirs: ${CUDA_INCLUDE_DIRS}")
-message(STATUS "CUDA rt library: ${CUDA_CUDART_LIBRARY}")
-message(STATUS "CUDA nvcc: ${CUDA_NVCC_EXECUTABLE}")
-
-add_subdirectory(App.2)
+add_subdirectory(App.V2)
+add_subdirectory(App.V3)
