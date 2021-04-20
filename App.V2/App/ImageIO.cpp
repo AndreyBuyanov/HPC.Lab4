@@ -63,19 +63,19 @@ Image ImageIO::Load(const std::string& path) noexcept(false)
 {
     auto inputImage = GenericLoader(path.c_str(), 0);
     if (!inputImage) {
-        throw std::runtime_error("");
+        throw std::runtime_error("Cannot load image");
     }
 
     const auto imageWidth = FreeImage_GetWidth(inputImage);
     const auto imageHeight = FreeImage_GetHeight(inputImage);
     if (!IsPowerOfTwo(imageWidth) || !IsPowerOfTwo(imageHeight)) {
-        throw std::runtime_error("");
+        throw std::runtime_error("Image size is not a power of 2");
     }
 
     auto temp = inputImage;
     inputImage = FreeImage_ConvertTo8Bits(inputImage);
     if (!inputImage) {
-        throw std::runtime_error("");
+        throw std::runtime_error("Unable to convert image to grayscale");
     }
     FreeImage_Unload(temp);
 
@@ -83,7 +83,7 @@ Image ImageIO::Load(const std::string& path) noexcept(false)
     for (Image::size_t y = 0; y < result.Height(); y++) {
         auto bits = FreeImage_GetScanLine(inputImage, y);
         if (!bits) {
-            throw std::runtime_error("");
+            throw std::runtime_error("Unable to read image line");
         }
         memcpy(&result.Data()[y * result.Width()], bits, result.Width());
     }
